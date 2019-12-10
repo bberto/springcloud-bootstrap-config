@@ -1,0 +1,50 @@
+server:
+  port: 8281
+  servlet:
+    context-path: /demo/config
+    
+spring:
+  application:
+    name: config
+  profiles:
+    active:
+    - ${gedi.env.name:default}
+  jmx:
+    enabled: false
+    default-domain: ${spring.application.name}
+  cloud:
+    discovery:
+      blocking:
+        enabled: true
+      reactive:
+        enabled: false  
+    config:
+      server:
+        git:
+          uri: https://github.com/bberto/springcloud-bootstrap-config.git
+
+eureka:
+  instance:
+    hostname: localhost
+    metadata-map:
+      startup: ${random.int} 
+      management.context-path: ${server.servlet.context-path}/actuator  #usato da admin-server
+      configPath: ${server.servlet.context-path} # usato dai config-client
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8280/demo/discovery/eureka
+
+management:
+  endpoints:
+    enabled-by-default: true
+    web.exposure.include: "*"
+    jmx.exposure.exclude: "*"
+  endpoint:
+    health:
+      show-details: always
+         
+---
+spring:
+  profiles: local
+server:
+  port: 8280
